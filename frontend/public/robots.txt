@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /files
+Disallow: /shares
+Disallow: /recycle
+Disallow: /profile
+Disallow: /share/
+Allow: /

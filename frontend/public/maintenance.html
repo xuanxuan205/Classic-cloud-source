@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<!-- 维护页是静态文件，不参与构建变量替换：如需显示自己的站点名，请直接改下方两处文案 -->
+<title>维护中</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(1200px 600px at 50% -10%, #1e1b4b 0%, #0f172a 55%, #020617 100%);
+    font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    color: #e2e8f0;
+  }
+  .card {
+    max-width: 420px;
+    width: calc(100% - 40px);
+    text-align: center;
+    padding: 40px 28px;
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(99, 102, 241, 0.5);
+    background: rgba(99, 102, 241, 0.12);
+    color: #a5b4fc;
+    font-size: 13px;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #a5b4fc; animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+  h1 { margin: 18px 0 8px; font-size: 26px; letter-spacing: 1px; color: #f8fafc; }
+  p { font-size: 14px; line-height: 1.9; color: #94a3b8; }
+  .ring { margin-top: 26px; width: 54px; height: 54px; margin-left: auto; margin-right: auto;
+    border: 4px solid rgba(99,102,241,0.2); border-top-color: #818cf8; border-radius: 50%;
+    animation: spin 1.1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge"><span class="dot"></span>官方维护中</span>
+    <h1>系统维护中</h1>
+    <p>官方正在进行安全维护与升级，<br>预计几分钟内恢复，请稍后回来。</p>
+    <div class="ring"></div>
+  </div>
+</body>
+</html>

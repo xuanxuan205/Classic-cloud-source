@@ -1,0 +1,47 @@
+# ===== 忽略清单 =====
+
+# 本地文档与工作草稿
+docs/
+*工作流程*.md
+
+# 依赖与构建产物
+node_modules/
+dist/
+target/
+*.jar
+*.war
+
+# 本地 Maven 仓与解包残留
+.m2/
+BOOT-INF/
+
+# 本地配置与凭据（请复制 .example 模板填写）
+.env.local
+.env.*.local
+backend/.env
+env.txt
+*.local.sh
+start.sh
+
+# 运行期规则与密钥（任意层级）
+**/config/ironwall-rules.json
+**/config/storage-master.key
+**/config/totp-state.json
+
+# 本地脚本与备份
+tools/
+.*-backup/
+
+# 运行期目录
+logs/
+uploads/
+releases/
+__pycache__/
+*.pyc
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

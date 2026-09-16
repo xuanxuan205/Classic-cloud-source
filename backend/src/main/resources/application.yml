@@ -1,0 +1,348 @@
+server:
+  port: ${SERVER_PORT:15060}
+  address: ${SERVER_ADDR:127.0.0.1}
+  # IronWall v1.26.0 防源码/结构探测：错误响应不泄露异常类型、消息与堆栈
+  error:
+    whitelabel:
+      enabled: false
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+    include-exception: false
+  # IronWall v1.6: 由应用层 ClientIpUtils 统一解析真实 IP，不依赖容器转发头解析，杜绝 XFF 伪造
+
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    serialization:
+      fail-on-empty-beans: false
+      write-dates-as-timestamps: false
+  application:
+    name: jdy-cloud-backend
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/jdy_cloud?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&characterEncoding=UTF-8}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        same-site: strict
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:850MB}
+      max-request-size: ${MAX_REQUEST_SIZE:900MB}
+
+  mail:
+    host: ${MAIL_HOST:smtp.qq.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    from: ${MAIL_FROM:}
+    # IronWall v1.48.0：发件人显示名不再带品牌默认值，由部署者在 .env 中自行填写
+    personal: ${MAIL_PERSONAL:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+app:
+  cors:
+    # 额外放行来源。同源部署无需 CORS；本地开发默认放行 Vite 端口。
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174}
+  # 站点身份信息，由部署者通过环境变量提供。
+  site:
+    # 站点对外域名（不含协议与斜杠）。用于分享链接生成、封禁页跳转白名单、
+    # CORS 内置白名单与溯源报告署名。留空时相关位置回退为请求的 Host 头。
+    domain: ${SITE_DOMAIN:}
+    # 站点完整地址（含协议）；留空时由 domain 推导为 https://{domain}
+    base-url: ${SITE_BASE_URL:}
+    # 对外联系邮箱；留空则邮件模板中不显示该行
+    contact-email: ${SITE_CONTACT_EMAIL:}
+    # 对外 QQ 或 QQ 群链接；留空则邮件模板中不显示该行
+    contact-qq: ${SITE_CONTACT_QQ:}
+  jwt:
+    secret: ${JWT_SECRET:}
+    expiration-ms: ${JWT_EXPIRATION:86400000}
+  storage:
+    upload-dir: ${UPLOAD_DIR:./uploads}
+    # IronWall v1.28.0: 回收站保留天数与每日自动清理时间（cron 五段式）
+    recycle-retention-days: ${RECYCLE_RETENTION_DAYS:30}
+    recycle-cleanup-cron: ${RECYCLE_CLEANUP_CRON:0 10 4 * * *}
+    # IronWall v1.42.0: 上传文件静态加密（AES-256-GCM 分块；主密钥取 env IRONWALL_STORAGE_KEY，否则 key-file 首次自动生成）
+    encryption:
+      enabled: ${STORAGE_ENCRYPTION_ENABLED:true}
+      key-file: ${STORAGE_ENCRYPTION_KEY_FILE:./config/storage-master.key}
+  admin:
+    # 首个管理员的引导配置：应用启动时若库中还没有任何管理员，会按下面三项创建；
+    # 已存在管理员时不做任何改动（重启不会覆盖你改过的密码）。
+    # password 留空则不创建账号，只在启动日志里提示；请在首次登录后立即修改密码。
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:}
+    # 该邮箱同时用于接收申诉与反馈通知；留空时创建的账号邮箱为 {username}@localhost
+    email: ${ADMIN_EMAIL:}
+  # IronWall v1.27.0: 版本发布手动切换（上传新包不自动生效，用户后台点开关才切换）与意见反馈
+  version:
+    releases-dir: ${RELEASES_DIR:./releases}
+    apply-script: ${APPLY_SCRIPT:./apply-update.sh}
+    switch-enabled: ${VERSION_SWITCH_ENABLED:false}
+  feedback:
+    enabled: ${FEEDBACK_ENABLED:true}
+    min-interval-ms: ${FEEDBACK_MIN_INTERVAL_MS:600000}
+    store: ${FEEDBACK_STORE:./logs/feedback-records.json}
+  security:
+    max-login-attempts: ${MAX_LOGIN_ATTEMPTS:5}
+    # IronWall v1.28.0: TOTP 两步验证密钥状态文件（含绑定用户密钥，权限 600）
+    totp-state-file: ${TOTP_STATE_FILE:./logs/totp-state.json}
+    login-lock-minutes: ${LOGIN_LOCK_MINUTES:30}
+    code-send-interval: ${CODE_SEND_INTERVAL:60}
+    # IronWall v1.40.0: API 加密层（会话密钥签名 + 会话路径前缀 + 防重放）
+    # 签名失败只 403 不计分；trust-loopback 供本机运维脚本免签名；allow-paths 为应急追加白名单（逗号分隔前缀）
+    api-crypto:
+      enabled: ${API_CRYPTO_ENABLED:true}
+      session-ttl-hours: ${API_CRYPTO_SESSION_TTL_HOURS:24}
+      ts-window-seconds: ${API_CRYPTO_TS_WINDOW_SECONDS:120}
+      bootstrap-max-per-minute: ${API_CRYPTO_BOOTSTRAP_MAX_PER_MINUTE:10}
+      trust-loopback: ${API_CRYPTO_TRUST_LOOPBACK:true}
+      allow-paths: ${API_CRYPTO_ALLOW_PATHS:}
+      # IronWall v1.41.0: 会话绑定边缘 TLS 指纹（双侧缺失自动跳过，防误伤）
+      tls-bind-enabled: ${API_CRYPTO_TLS_BIND_ENABLED:true}
+      # IronWall v1.41.0: 签名失败审计阈值（仅统计告警，不计分不封禁）
+      audit-threshold-per-minute: ${API_CRYPTO_AUDIT_THRESHOLD_PER_MINUTE:30}
+      # IronWall v1.42.0: 路由码轮换（当前码+旧码宽限期共存，换码瞬间不断链）
+      route-code-rotation-hours: ${API_CRYPTO_ROUTE_CODE_ROTATION_HOURS:24}
+      route-code-grace-periods: ${API_CRYPTO_ROUTE_CODE_GRACE_PERIODS:1}
+    trusted-proxies: ${TRUSTED_PROXIES:127.0.0.1,::1,0:0:0:0:0:0:0:1}
+    # IronWall v1.42.0: 分享直链下载签名密钥（HMAC-SHA256；留空则派生自 JWT secret）
+    share-link:
+      secret: ${SHARE_LINK_SECRET:}
+    # IronWall v1.17: 管理员固定 IP 白名单（多个用英文逗号分隔）；家宽 IP 变动后需同步更新
+    # 留空时管理员仍可凭 JWT 角色获得 ADMIN 级别
+    # （见 RequestTrustResolver，ADMIN 级别永不被硬封）；填写后额外获得限流与封禁完全豁免。
+    admin-ip-whitelist: ${ADMIN_IP_WHITELIST:}
+    rate-limit:
+      enabled: ${RATE_LIMIT_ENABLED:true}
+      requests-per-minute: ${RATE_LIMIT_RPM:60}
+      auth-requests-per-minute: ${RATE_LIMIT_AUTH_RPM:5}
+      # IronWall v1.21.2: 认证后接口按用户分桶限流（防批量爬取个人数据）
+      # IronWall v1.22.0: 收紧为 60 次/分，并叠加短窗突发上限
+      authenticated-requests-per-minute: ${AUTHENTICATED_RPM:60}
+      authenticated-burst: ${AUTHENTICATED_BURST:20}
+      authenticated-burst-seconds: ${AUTHENTICATED_BURST_SECONDS:10}
+    # IronWall v1.35.0: DDoS 分层防御与溯源取证（观测/记分/集群证据/落盘取证，热路径零 I/O）
+    ddos:
+      enabled: ${ATTACK_GUARD_DDOS_ENABLED:true}
+      per-ip-flood-rps: ${ATTACK_GUARD_DDOS_FLOOD_RPS:25}
+      per-ip-severe-rps: ${ATTACK_GUARD_DDOS_SEVERE_RPS:100}
+      window-seconds: ${ATTACK_GUARD_DDOS_WINDOW_SECONDS:5}
+      endpoint-flood-rps: ${ATTACK_GUARD_DDOS_ENDPOINT_RPS:800}
+      cluster-min-ips: ${ATTACK_GUARD_DDOS_CLUSTER_MIN_IPS:30}
+      cluster-member-min-rps: ${ATTACK_GUARD_DDOS_CLUSTER_MEMBER_RPS:10}
+      cluster-window-seconds: ${ATTACK_GUARD_DDOS_CLUSTER_WINDOW_SECONDS:120}
+      cluster-evidence-boost: ${ATTACK_GUARD_DDOS_CLUSTER_BOOST:10}
+      global-ips-surge: ${ATTACK_GUARD_DDOS_GLOBAL_IPS_SURGE:2000}
+      max-tracked-ips: ${ATTACK_GUARD_DDOS_MAX_TRACKED_IPS:20000}
+      max-score-per-cycle: ${ATTACK_GUARD_DDOS_MAX_SCORE_PER_CYCLE:300}
+      log-path: ${ATTACK_GUARD_DDOS_LOG_PATH:logs/ironwall-ddos.log}
+      flush-ms: ${ATTACK_GUARD_DDOS_FLUSH_MS:10000}
+    # IronWall v1.23.0: fail2ban 联动桥（网站层封禁 -> 服务器层全端口封禁）
+    fail2ban-bridge:
+      enabled: ${F2B_BRIDGE_ENABLED:true}
+    # IronWall v1.25.1: 服务器前置护盾状态（root cron 采集脚本 -> www 可读状态文件 -> 管理后台面板）
+    server-shield:
+      enabled: ${SERVER_SHIELD_ENABLED:true}
+      state-file: ${SERVER_SHIELD_STATE_FILE:./logs/server-shield-state.json}
+
+    share-lookup-rpm: ${SHARE_LOOKUP_RPM:30}
+    share-download-rpm: ${SHARE_DOWNLOAD_RPM:10}
+    share-download-per-code-rpm: ${SHARE_DOWNLOAD_PER_CODE_RPM:30}
+    # IronWall v1.47.9: 分享打包下载资源上限（防压缩炸弹 / 超大分享拖垮服务）
+    share-zip:
+      max-entries: ${SHARE_ZIP_MAX_ENTRIES:1000}
+      max-total-bytes: ${SHARE_ZIP_MAX_TOTAL_BYTES:314572800}
+    crawler-guard:
+      enabled: ${CRAWLER_GUARD_ENABLED:true}
+      max-api-rpm: ${CRAWLER_MAX_API_RPM:300}
+      max-crawler-rpm: ${CRAWLER_MAX_CRAWLER_RPM:10}
+      burst-score-interval-ms: ${CRAWLER_BURST_SCORE_INTERVAL_MS:5000}
+      # IronWall v1.28.13: PoW 动态难度（新 IP 基线、可疑 IP 上调、封顶保护体验）
+      pow-difficulty: ${CRAWLER_POW_DIFFICULTY:4}
+      pow-difficulty-max: ${CRAWLER_POW_DIFFICULTY_MAX:6}
+      pow-reputation-threshold: ${CRAWLER_POW_REPUTATION_THRESHOLD:10}
+      pow-reputation-boost: ${CRAWLER_POW_REPUTATION_BOOST:2}
+      # IronWall v1.20: 行为指纹 + JS 挑战（防浏览器 UA 伪装爬虫）
+      behavior-fingerprint:
+        enabled: ${CRAWLER_FINGERPRINT_ENABLED:true}
+      challenge:
+        enabled: ${CRAWLER_CHALLENGE_ENABLED:true}
+      # IronWall v1.28.9: 高危写接口（登录/注册/上传等）在 API 层强制 JS 证明
+      require-js-proof-for-sensitive: ${CRAWLER_JS_PROOF_SENSITIVE:true}
+    # IronWall v1.20: 令牌版本号吊销（改密/重置/封禁后旧 JWT 立即失效）
+    token-version:
+      enabled: ${TOKEN_VERSION_ENABLED:true}
+    attack-guard:
+      enabled: true
+      # IronWall v1.42.0: 移动/家宽运营商出口误封熔断（封禁时长封顶、跳过 IP 段封禁）
+      mobile-carrier:
+        enabled: ${ATTACK_GUARD_MOBILE_CARRIER_ENABLED:true}
+        max-block-minutes: ${ATTACK_GUARD_MOBILE_CARRIER_MAX_BLOCK_MINUTES:30}
+      # IronWall v1.44.0: 认证用户级 API 限速（防令牌泄露批量拉取；管理员豁免）
+      user-rate-limit:
+        enabled: ${USER_RATE_LIMIT_ENABLED:true}
+        max-requests-per-minute: ${USER_RATE_LIMIT_MAX_PER_MINUTE:1800}
+        retry-after-seconds: ${USER_RATE_LIMIT_RETRY_AFTER_SECONDS:30}
+      # IronWall v1.28.13: 运算族盲区规则独立开关（误报时可单独回滚）
+      operator-family:
+        enabled: ${ATTACK_GUARD_OPERATOR_FAMILY_ENABLED:true}
+      # IronWall v1.34.0: MySQL 内置语法族盲区规则独立开关（误报时可单独回滚）
+      mysql-builtin:
+        enabled: ${ATTACK_GUARD_MYSQL_BUILTIN_ENABLED:true}
+      # IronWall v1.28.15: 跨IP协同攻击检测（同载荷指纹多来源联动封禁，打击代理池轮换）
+      campaign:
+        enabled: ${ATTACK_GUARD_CAMPAIGN_ENABLED:true}
+        min-ips: ${ATTACK_GUARD_CAMPAIGN_MIN_IPS:3}
+        window-minutes: ${ATTACK_GUARD_CAMPAIGN_WINDOW_MINUTES:10}
+        block-minutes: ${ATTACK_GUARD_CAMPAIGN_BLOCK_MINUTES:120}
+      # IronWall v1.30.0: 攻击族×路径跨IP聚合（代理池+每请求新载荷式扫描，>=N 个攻击 IP 全部封禁）
+      family:
+        enabled: ${ATTACK_GUARD_FAMILY_ENABLED:true}
+        min-ips: ${ATTACK_GUARD_FAMILY_MIN_IPS:8}
+        window-minutes: ${ATTACK_GUARD_FAMILY_WINDOW_MINUTES:30}
+        block-minutes: ${ATTACK_GUARD_FAMILY_BLOCK_MINUTES:120}
+      # IronWall v1.31.0: SQL 词法/语义检测层（正则盲区的第二意见，误报时可单独回滚）
+      semantic:
+        enabled: ${ATTACK_GUARD_SEMANTIC_ENABLED:true}
+      # IronWall v1.31.0: TLS 会话指纹（JA4）跨IP攻击证据；仅加速已计分攻击 IP，绝不按指纹封锁。起边缘真实 JA4（X-TLS-JA4）优先采信
+      tls-profile:
+        enabled: ${ATTACK_GUARD_TLS_PROFILE_ENABLED:true}
+        min-ips: ${ATTACK_GUARD_TLS_PROFILE_MIN_IPS:2}
+        window-minutes: ${ATTACK_GUARD_TLS_PROFILE_WINDOW_MINUTES:1440}
+        boost-weight: ${ATTACK_GUARD_TLS_PROFILE_BOOST_WEIGHT:10}
+        # IronWall v1.32.0: TLS 指纹先手封禁（集群已触发后同指纹新攻击成员首发即封；false 回滚旧加分模式）
+        escalate-enabled: ${ATTACK_GUARD_TLS_PROFILE_ESCALATE_ENABLED:true}
+        escalate-block-minutes: ${ATTACK_GUARD_TLS_PROFILE_ESCALATE_BLOCK_MINUTES:120}
+      # IronWall v1.32.0: 攻击模板指纹聚合（载荷字面量漂移归一化后跨IP联动封禁，打击代理池每请求微调载荷）
+      template:
+        enabled: ${ATTACK_GUARD_TEMPLATE_ENABLED:true}
+        min-ips: ${ATTACK_GUARD_TEMPLATE_MIN_IPS:3}
+        window-minutes: ${ATTACK_GUARD_TEMPLATE_WINDOW_MINUTES:10}
+        block-minutes: ${ATTACK_GUARD_TEMPLATE_BLOCK_MINUTES:120}
+        # IronWall v1.33.0: 模板相似度第二层（3-gram Jaccard 合并结构微调载荷）
+        similarity-enabled: ${ATTACK_GUARD_TEMPLATE_SIMILARITY_ENABLED:true}
+        similarity-threshold: ${ATTACK_GUARD_TEMPLATE_SIMILARITY_THRESHOLD:0.75}
+      # IronWall v1.32.0: 代理/机房信誉放大器（仅放大已确认攻击计分，绝不单独封禁正常流量）
+      proxy-reputation:
+        enabled: ${ATTACK_GUARD_PROXY_REPUTATION_ENABLED:true}
+        boost: ${ATTACK_GUARD_PROXY_REPUTATION_BOOST:10}
+      # IronWall v1.33.0: 登录接口蜜标账号诱捕（随机假账号，提交即高置信攻击；真实用户不可能提交）
+      login-honeypot:
+        enabled: ${ATTACK_GUARD_LOGIN_HONEYPOT_ENABLED:true}
+        # 留空即该防线停用。建议设置若干「正常用户绝不可能提交」的账号名，
+        # 取值越像内部账号效果越好。
+        usernames: ${ATTACK_GUARD_LOGIN_HONEYPOT_USERNAMES:}
+      # IronWall v1.28.16: 设备指纹锁定（攻击触发IP封禁时同步锁定指纹，换代理IP无效）
+      fingerprint:
+        enabled: ${ATTACK_GUARD_FINGERPRINT_ENABLED:true}
+        min-ips: ${ATTACK_GUARD_FINGERPRINT_MIN_IPS:2}
+        block-minutes: ${ATTACK_GUARD_FINGERPRINT_BLOCK_MINUTES:120}
+        window-minutes: ${ATTACK_GUARD_FINGERPRINT_WINDOW_MINUTES:1440}
+        # IronWall v1.29.0: 指纹轮换规避检测（同设备短时间内更换指纹即锁定设备）
+        churn-min-fps: ${ATTACK_GUARD_FINGERPRINT_CHURN_MIN_FPS:3}
+        churn-window-minutes: ${ATTACK_GUARD_FINGERPRINT_CHURN_WINDOW_MINUTES:60}
+      # IronWall v1.29.0: 设备级跨IP证据（同设备ID从多IP攻击即锁定）
+      device:
+        min-ips: ${ATTACK_GUARD_DEVICE_MIN_IPS:2}
+        window-minutes: ${ATTACK_GUARD_DEVICE_WINDOW_MINUTES:1440}
+      warn-score: 10
+      block-score: 20
+      severe-block-score: 40
+      block-minutes: 30
+      severe-block-hours: 24
+      # IronWall v1.24.0: 单发即封人机验证二次确认（防误伤真实用户）
+      challenge:
+        enabled: true
+        max-attempts: 5
+        # IronWall v1.39.0: 高危路径攻击权重 10→6（4 击封禁，闭环）
+        high-risk-path-weight: ${ATTACK_GUARD_HIGH_RISK_PATH_WEIGHT:6}
+      # IronWall v1.25.0: WARN 计分时间衰减窗口（毫秒，30 分钟未再攻击记分折半）
+      score-decay-window-ms: 1800000
+      # IronWall v1.26.0: 爬虫/合法自动化客户端专属快速衰减（5 分钟）
+      crawler-decay-window-ms: 300000
+      # IronWall v1.38.0: ban sync (multi-instance attack_logs event bus)
+      ban-sync:
+        enabled: ${BAN_SYNC_ENABLED:true}
+        interval-ms: ${BAN_SYNC_INTERVAL_MS:30000}
+    canary-token: ${CANARY_TOKEN:}
+    defense-engine:
+      enabled: ${DEFENSE_ENGINE_ENABLED:true}
+      # IronWall v1.21: 五层黑洞陷阱（只进不出，进入后除警示页外一切请求被吞没）
+      trap:
+        enabled: ${TRAP_ENABLED:true}
+        minutes: ${TRAP_MINUTES:30}
+        delay-ms: ${TRAP_DELAY_MS:1500}
+        max-concurrent: ${TRAP_MAX_CONCURRENT:16}
+        # IronWall v1.25.0: 入陷阱满该分钟后开放人机验证逃生口
+        escape-minutes: 10
+      tarpit:
+        enabled: ${TARPIT_ENABLED:true}
+        delay-ms: ${TARPIT_DELAY_MS:15000}
+        max-delay-ms: ${TARPIT_MAX_DELAY_MS:30000}
+        max-concurrent: ${TARPIT_MAX_CONCURRENT:8}
+        cpu-watermark: ${TARPIT_CPU_WATERMARK:0.8}
+        heap-watermark: ${TARPIT_HEAP_WATERMARK:0.85}
+        health-refresh-ms: ${TARPIT_HEALTH_REFRESH_MS:1000}
+      honeypot:
+        enabled: ${HONEYPOT_ENABLED:true}
+      segment-block:
+        enabled: ${SEGMENT_BLOCK_ENABLED:true}
+        repeat-offense-count: ${SEGMENT_BLOCK_REPEAT_COUNT:3}
+        block-hours: ${SEGMENT_BLOCK_HOURS:48}
+      blocked-page:
+        enabled: ${BLOCKED_PAGE_ENABLED:true}
+        # IronWall v1.26.1: 申诉限流（每 IP 最小间隔 + 每 IP 待审上限）
+        # IronWall v1.28.9: 默认间隔 60 秒，避免正常用户长时间无法重复申诉
+        appeal-min-interval-ms: ${APPEAL_MIN_INTERVAL_MS:60000}
+        appeal-max-pending-per-ip: ${APPEAL_MAX_PENDING_PER_IP:3}
+      aggregation:
+        ua-ip-threshold: ${AGG_UA_IP_THRESHOLD:8}
+        tls-ip-threshold: ${AGG_TLS_IP_THRESHOLD:6}
+        device-ip-threshold: ${AGG_DEVICE_IP_THRESHOLD:4}
+        window-ms: ${AGG_WINDOW_MS:1800000}
+      # IronWall v1.17: threat intel (default on, ip-api lookup with graceful fallback)
+      threat-intel:
+        enabled: ${THREAT_INTEL_ENABLED:true}
+        provider: ${THREAT_INTEL_PROVIDER:ip-api}
+        cache-ttl-hours: ${THREAT_INTEL_CACHE_TTL_HOURS:24}
+    # IronWall v1.48.1: 七层假端口陷阱。除常见服务端口外，把你实际占用的端口补进来
+    # （管理面板、改过的 SSH 等，逗号分隔），生成的诱饵端口就不会与真实业务撞车。
+    decoy:
+      reserved-ports: ${IRONWALL_RESERVED_PORTS:}
+    alerts:
+      enabled: ${ALERTS_ENABLED:true}
+      webhook-url: ${ALERTS_WEBHOOK_URL:}
+      email-enabled: ${ALERTS_EMAIL_ENABLED:true}
+
+logging:
+  level:
+    com.jdy.cloud: ${LOG_LEVEL:INFO}
+    org.springframework.security: WARN

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  IronWall v1.23.0: 网站层 -> 服务器层 联动桥
+  IRONWALL-F2B 日志器写入 logs/ironwall-attacks.log，
+  服务器上的 fail2ban 实时跟踪该文件，攻击者一旦被封禁
+  即触发 iptables/nftables 全端口封禁（服务器级防护）。
+-->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <appender name="F2B_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${F2B_LOG_FILE:-logs/ironwall-attacks.log}</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${F2B_LOG_FILE:-logs/ironwall-attacks}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="IRONWALL-F2B" level="INFO" additivity="false">
+        <appender-ref ref="F2B_FILE"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

@@ -1,0 +1,51 @@
+# Maven
+target/
+*.jar
+*.war
+
+# 本地 Maven 仓与解包残留
+.m2/
+BOOT-INF/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 日志
+*.log
+logs/
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 环境变量
+.env
+env.txt
+*.local.sh
+
+# 运行期规则与密钥
+config/ironwall-rules.json
+config/storage-master.key
+config/totp-state.json
+
+# 本地脚本与备份
+tools/
+.*-backup/
+
+# 内部研发文档
+docs/
+
+# 部署脚本按环境生成，模板见 start.sh.example
+start.sh
+
+# 上传目录
+uploads/

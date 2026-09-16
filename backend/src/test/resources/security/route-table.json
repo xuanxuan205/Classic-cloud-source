@@ -1,0 +1,321 @@
+{
+  "version": 1,
+  "routes": [
+    {
+      "logical": "auth/login",
+      "real": "/api/auth/login"
+    },
+    {
+      "logical": "auth/register",
+      "real": "/api/auth/register"
+    },
+    {
+      "logical": "auth/logout",
+      "real": "/api/auth/logout"
+    },
+    {
+      "logical": "auth/check-email",
+      "real": "/api/auth/check-email"
+    },
+    {
+      "logical": "auth/send-code",
+      "real": "/api/auth/send-code"
+    },
+    {
+      "logical": "auth/verify-code",
+      "real": "/api/auth/verify-code"
+    },
+    {
+      "logical": "auth/reset-password",
+      "real": "/api/auth/reset-password"
+    },
+    {
+      "logical": "auth/user-info",
+      "real": "/api/auth/user-info"
+    },
+    {
+      "logical": "auth/change-password",
+      "real": "/api/auth/change-password"
+    },
+    {
+      "logical": "auth/update-username",
+      "real": "/api/auth/update-username"
+    },
+    {
+      "logical": "auth/update-email",
+      "real": "/api/auth/update-email"
+    },
+    {
+      "logical": "auth/verify-email",
+      "real": "/api/auth/verify-email"
+    },
+    {
+      "logical": "auth/upload-avatar",
+      "real": "/api/auth/upload-avatar"
+    },
+    {
+      "logical": "auth/delete-account",
+      "real": "/api/auth/delete-account"
+    },
+    {
+      "logical": "auth/notification-settings",
+      "real": "/api/auth/notification-settings"
+    },
+    {
+      "logical": "auth/login-history",
+      "real": "/api/auth/login-history"
+    },
+    {
+      "logical": "auth/devices",
+      "real": "/api/auth/devices"
+    },
+    {
+      "logical": "auth/announcements",
+      "real": "/api/auth/announcements"
+    },
+    {
+      "logical": "auth/2fa/status",
+      "real": "/api/auth/2fa/status"
+    },
+    {
+      "logical": "auth/2fa/setup",
+      "real": "/api/auth/2fa/setup"
+    },
+    {
+      "logical": "auth/2fa/confirm",
+      "real": "/api/auth/2fa/confirm"
+    },
+    {
+      "logical": "auth/2fa/disable",
+      "real": "/api/auth/2fa/disable"
+    },
+    {
+      "logical": "auth/2fa/login",
+      "real": "/api/auth/2fa/login"
+    },
+    {
+      "logical": "auth/devices/{0}",
+      "real": "/api/auth/devices/{0}"
+    },
+    {
+      "logical": "files/list",
+      "real": "/api/files/list"
+    },
+    {
+      "logical": "files/folder",
+      "real": "/api/files/folder"
+    },
+    {
+      "logical": "files/folder/list",
+      "real": "/api/files/folder/list"
+    },
+    {
+      "logical": "files/upload",
+      "real": "/api/files/upload"
+    },
+    {
+      "logical": "files/upload/chunk",
+      "real": "/api/files/upload/chunk"
+    },
+    {
+      "logical": "files/upload/check",
+      "real": "/api/files/upload/check"
+    },
+    {
+      "logical": "files/upload/merge",
+      "real": "/api/files/upload/merge"
+    },
+    {
+      "logical": "files/ping",
+      "real": "/api/files/ping"
+    },
+    {
+      "logical": "files/storage",
+      "real": "/api/files/storage"
+    },
+    {
+      "logical": "files/recycle",
+      "real": "/api/files/recycle"
+    },
+    {
+      "logical": "files/{0}",
+      "real": "/api/files/{0}"
+    },
+    {
+      "logical": "files/{0}/permanent",
+      "real": "/api/files/{0}/permanent"
+    },
+    {
+      "logical": "files/{0}/restore",
+      "real": "/api/files/{0}/restore"
+    },
+    {
+      "logical": "files/folder/{0}",
+      "real": "/api/files/folder/{0}"
+    },
+    {
+      "logical": "files/download/{0}",
+      "real": "/api/files/download/{0}"
+    },
+    {
+      "logical": "shares/list",
+      "real": "/api/shares/list"
+    },
+    {
+      "logical": "shares/create",
+      "real": "/api/shares/create"
+    },
+    {
+      "logical": "shares/challenge/{0}",
+      "real": "/api/shares/challenge/{0}"
+    },
+    {
+      "logical": "shares/{0}",
+      "real": "/api/shares/{0}"
+    },
+    {
+      "logical": "site/info",
+      "real": "/api/site/info"
+    },
+    {
+      "logical": "version/info",
+      "real": "/api/version/info"
+    },
+    {
+      "logical": "feedback",
+      "real": "/api/feedback"
+    },
+    {
+      "logical": "admin/dashboard",
+      "real": "/api/admin/dashboard"
+    },
+    {
+      "logical": "admin/users",
+      "real": "/api/admin/users"
+    },
+    {
+      "logical": "admin/users/unverified",
+      "real": "/api/admin/users/unverified"
+    },
+    {
+      "logical": "admin/users/{0}",
+      "real": "/api/admin/users/{0}"
+    },
+    {
+      "logical": "admin/users/{0}/verify",
+      "real": "/api/admin/users/{0}/verify"
+    },
+    {
+      "logical": "admin/users/{0}/unverify",
+      "real": "/api/admin/users/{0}/unverify"
+    },
+    {
+      "logical": "admin/files",
+      "real": "/api/admin/files"
+    },
+    {
+      "logical": "admin/files/{0}/status",
+      "real": "/api/admin/files/{0}/status"
+    },
+    {
+      "logical": "admin/shares",
+      "real": "/api/admin/shares"
+    },
+    {
+      "logical": "admin/shares/{0}/status",
+      "real": "/api/admin/shares/{0}/status"
+    },
+    {
+      "logical": "admin/logs",
+      "real": "/api/admin/logs"
+    },
+    {
+      "logical": "admin/security",
+      "real": "/api/admin/security"
+    },
+    {
+      "logical": "admin/security/summary",
+      "real": "/api/admin/security/summary"
+    },
+    {
+      "logical": "admin/security/attacks",
+      "real": "/api/admin/security/attacks"
+    },
+    {
+      "logical": "admin/security/attackers",
+      "real": "/api/admin/security/attackers"
+    },
+    {
+      "logical": "admin/security/block-ip",
+      "real": "/api/admin/security/block-ip"
+    },
+    {
+      "logical": "admin/security/unblock",
+      "real": "/api/admin/security/unblock"
+    },
+    {
+      "logical": "admin/security/segment-unblock",
+      "real": "/api/admin/security/segment-unblock"
+    },
+    {
+      "logical": "admin/security/server-shield",
+      "real": "/api/admin/security/server-shield"
+    },
+    {
+      "logical": "admin/security/ip-geo",
+      "real": "/api/admin/security/ip-geo"
+    },
+    {
+      "logical": "admin/security/decoy-ports/rotate",
+      "real": "/api/admin/security/decoy-ports/rotate"
+    },
+    {
+      "logical": "admin/security/attacker/{0}/report",
+      "real": "/api/admin/security/attacker/{0}/report"
+    },
+    {
+      "logical": "admin/security/share-download-limits",
+      "real": "/api/admin/security/share-download-limits"
+    },
+    {
+      "logical": "admin/security/share-download-limits/reset",
+      "real": "/api/admin/security/share-download-limits/reset"
+    },
+    {
+      "logical": "admin/settings",
+      "real": "/api/admin/settings"
+    },
+    {
+      "logical": "admin/announcements",
+      "real": "/api/admin/announcements"
+    },
+    {
+      "logical": "admin/announcements/{0}",
+      "real": "/api/admin/announcements/{0}"
+    },
+    {
+      "logical": "admin/upload-limit",
+      "real": "/api/admin/upload-limit"
+    },
+    {
+      "logical": "admin/smtp",
+      "real": "/api/admin/smtp"
+    },
+    {
+      "logical": "admin/verification",
+      "real": "/api/admin/verification"
+    },
+    {
+      "logical": "admin/appeals",
+      "real": "/api/admin/appeals"
+    },
+    {
+      "logical": "admin/appeals/{0}/resolve",
+      "real": "/api/admin/appeals/{0}/resolve"
+    },
+    {
+      "logical": "admin/download-stats",
+      "real": "/api/admin/download-stats"
+    }
+  ]
+}
