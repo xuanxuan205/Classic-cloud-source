@@ -31,6 +31,8 @@ start.sh
 # 本地脚本与备份
 tools/
 .*-backup/
+# 本机一次性助手脚本（含服务器 IP / SSH 登录命令，不进仓库）
+_*.bat
 
 # 运行期目录
 logs/
