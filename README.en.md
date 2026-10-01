@@ -31,33 +31,6 @@ What makes it different: **the web application firewall is inside the app, not
 bolted on afterwards.** If you have ever exposed a service to the internet, you
 know the scanner traffic. Classic Cloud turns that traffic into bans.
 
-## One-command install
-
-```bash
-sudo bash install.sh --web
-```
-
-That installs JDK 21 / MySQL / nginx and then opens a **web install wizard** in
-your browser: fill in a few fields, click install, and it prints your site URL,
-admin URL and admin credentials.
-
-<img src="installer/screenshots/wizard-2-form.png" alt="Install wizard · configuration" width="60%" />
-
-Prefer unattended:
-
-```bash
-sudo bash install.sh --yes \
-  --domain drive.example.com \
-  --admin-user admin --admin-pass 'change-me-please' \
-  --db-name jdy_cloud --db-user jdy_cloud --db-pass 'change-me-too'
-```
-
-The installer provisions the JRE, database, schema, random secrets, frontend
-assets, nginx reverse proxy, a systemd unit with autostart, and a Let's Encrypt
-certificate. BaoTa (aaPanel-style) panel layouts are detected automatically;
-`--bt-java` hands the backend over to the panel's Java project manager instead
-of systemd. Use `--dry-run` to preview everything without touching the server.
-
 ## Features
 
 | Area | What you get |
@@ -108,7 +81,7 @@ CrawlerDefense → Tarpit → JwtAuthentication → UserRateLimit → AccountDev
 | Frontend | Vue 3, TypeScript, Vite 5, Pinia, Tailwind CSS |
 | Database | MySQL 8 (schema in `backend/src/main/resources/db/init.sql`) |
 | Gateway | nginx 1.20+ (reverse proxy, optional JA4 fingerprint module) |
-| Deployment | `install.sh` (systemd or BaoTa panel), web install wizard |
+| Deployment | BaoTa (aaPanel) panel or systemd; see the Chinese deployment guide |
 
 ## Project layout
 
@@ -119,8 +92,6 @@ CrawlerDefense → Tarpit → JwtAuthentication → UserRateLimit → AccountDev
 │  ├─ deploy/        nginx templates, logrotate, JA4 module
 │  └─ server-guard/  host-level hardening scripts
 ├─ frontend/         Vue 3 + TypeScript SPA
-├─ installer/        web install wizard (Python 3 standard library only)
-├─ install.sh        one-command installer
 └─ 宝塔面板部署教程.md  step-by-step manual deployment guide (Chinese)
 ```
 

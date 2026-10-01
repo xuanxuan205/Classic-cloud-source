@@ -54,55 +54,6 @@
 
 ---
 
-## 一键安装（图形向导）
-
-> 英文说明见 [README.en.md](README.en.md)。
-
-不用啃命令行。把源码放进服务器，执行一句：
-
-```bash
-sudo bash install.sh --web
-```
-
-终端会打印一条带访问口令的网址，用浏览器打开就是下面这个界面 —— 填几个空，
-点「开始安装」，剩下的交给它：
-
-<table>
-<tr>
-<td width="50%"><img src="installer/screenshots/wizard-1-check.png" alt="安装向导 · 环境自检" /></td>
-<td width="50%"><img src="installer/screenshots/wizard-2-form.png" alt="安装向导 · 填写配置" /></td>
-</tr>
-</table>
-
-<img src="installer/screenshots/wizard-3-done.png" alt="安装向导 · 安装完成" width="66%" />
-
-装完直接给出**首页地址、后台地址、管理员账号密码**，一键复制存好，不用去翻配置文件。
-
-想一条命令装完（脚本部署 / CI）：
-
-```bash
-sudo bash install.sh --yes \
-  --domain drive.example.com \
-  --admin-user admin --admin-pass '换成你的强密码' \
-  --db-name jdy_cloud --db-user jdy_cloud --db-pass '换成你的数据库密码'
-```
-
-安装器会依次做完这些事：
-
-1. 装好 JDK 21 / MySQL / nginx（已装过的自动跳过）
-2. 建库、建账号、导入 8 张表的结构
-3. 生成配置文件，随机密钥一次写齐（JWT / 分享签名 / 存储加密）
-4. 部署前端静态文件，配好 nginx 反向代理与上传体积上限
-5. 注册成开机自启的后台服务，最后申请 HTTPS 证书
-
-宝塔面板会被自动识别并改用 `/www` 目录结构；要用宝塔「Java 项目管理器」托管就加
-`--bt-java`，向导会在最后把面板里该填的每个字段逐项列出来。
-
-> 只想先看它准备做什么、不动服务器：加 `--dry-run`。
-> 详细参数：`bash install.sh --help`；纯手工部署见 [宝塔面板部署教程](宝塔面板部署教程.md)。
-
----
-
 ## 功能特性
 
 ### 文件与分享
@@ -358,9 +309,6 @@ flowchart LR
 
 ## 快速开始
 
-> 想最快跑起来：`sudo bash install.sh --web`（见 [一键安装](#一键安装图形向导)），
-> 图形界面填空即可；下面这套是手动 / 二次开发的做法。
-
 ### 环境要求
 
 | 组件 | 版本 | 用途 |
@@ -434,8 +382,6 @@ curl -s http://127.0.0.1:15060/api/version/info
 
 ### 部署资料
 
-- ⚡ **[install.sh](install.sh)** —— 全自动安装器：依赖、建库、配置、前端、nginx、开机自启、HTTPS 一把梭，自动识别宝塔面板
-- 🧭 **[installer/](installer/)** —— 网页安装向导（图形界面，浏览器里填空就能装）
 - 📘 **[宝塔面板部署教程](宝塔面板部署教程.md)** —— 面向新手，含反向代理、SSL、加固与排错
 - 📦 **[Releases](../../releases)** —— 直接下 `jdy-cloud.jar` 与前端静态包，不用自己编译
 - 📄 [`backend/deploy/`](backend/deploy/) —— nginx 配置模板、日志轮转、JA4 指纹模块
