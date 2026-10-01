@@ -45,3 +45,7 @@ __pycache__/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# 本地发布包（二进制不进 git 历史，走 Releases 附件上传）
+release/
+release.zip
